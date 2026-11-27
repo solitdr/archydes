@@ -345,7 +345,7 @@ Die beiden letzten Bedingungen erkennen eine vollständige neuere Generation mit
 
 **Snapshot-Nummern.** Ein neuer Snapshot bekommt die größte vorhandene `id` plus 1. Nummern werden nicht wiederverwendet, auch nicht nach dem Löschen.
 
-**Snapshot löschen.** Eine neue Generation ohne PACK-Segmente: (verschlüsselt: KEY_INFO-Kopie,) INDEX und INDEX_COPY ohne die gelöschten Snapshots, optional RECOVERY, Footer. Chunks und Packs bleiben im Index und in der Datei (A6), bis das Archiv optimiert wird; der letzte Snapshot kann nicht gelöscht werden.
+**Snapshot löschen.** Eine neue Generation ohne PACK-Segmente: (verschlüsselt: KEY_INFO-Kopie,) INDEX und INDEX_COPY ohne die gelöschten Snapshots, optional RECOVERY, Footer. Chunks und Packs bleiben im Index und in der Datei (A6), bis das Archiv optimiert wird. Der letzte Snapshot kann nicht gelöscht werden.
 
 **Optimieren.** Schreibt das Archiv neu, mit nur den Chunks, die ein Snapshot noch benutzt (Rezepte und erweiterte Attribute). Packs, deren Chunks alle benutzt sind, werden unverändert übernommen, teilweise benutzte entpackt und neu gepackt, unbenutzte entfallen. `archive_uuid` und `created_ns` des Dateikopfs bleiben, `generation` steigt um 1, RECOVERY deckt die ganze neue Datei ab. Die neue Datei ersetzt die alte durch Umbenennen.
 
@@ -353,7 +353,7 @@ Die beiden letzten Bedingungen erkennen eine vollständige neuere Generation mit
 
 Ein verschlüsseltes Archiv hat `format_minor = 1` und Bit 0 (verschlüsselt) in Header und jedem Footer. Unverschlüsselte Archive bleiben Format 1.0.
 
-**Was verschlüsselt ist.** Die Nutzdaten der Segmente PACK, INDEX und INDEX_COPY. Klartext bleiben FORMAT_INFO, KEY_INFO und RECOVERY. PLAIN_TOC ist verboten. Damit sind Inhalte, Namen, Größen und Daten einzelner Dateien, Kommentare, erweiterte Attribute und Chunk-IDs geschützt. Sichtbar bleiben Gesamtgröße, Anzahl und Größe der Segmente, Zahl der Generationen, Erstellzeit und die Argon2-Parameter.
+**Was verschlüsselt ist.** Die Nutzdaten der Segmente PACK, INDEX und INDEX_COPY. Unverschlüsselt bleiben FORMAT_INFO, KEY_INFO und RECOVERY. PLAIN_TOC ist verboten. Damit sind Inhalte, Namen, Größen und Daten einzelner Dateien, Kommentare, erweiterte Attribute und Chunk-IDs geschützt. Sichtbar bleiben Gesamtgröße, Anzahl und Größe der Segmente, Zahl der Generationen, Erstellzeit und die Argon2-Parameter.
 
 **Schlüssel.**
 
