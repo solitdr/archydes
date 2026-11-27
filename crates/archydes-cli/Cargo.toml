@@ -1,0 +1,27 @@
+[package]
+name = "archydes-cli"
+description = "archydes: list, extract, verify and inspect Archydes archives (.archy)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+name = "archydes_cli"
+
+[[bin]]
+name = "archydes"
+path = "src/bin/archydes.rs"
+
+[[bin]]
+name = "ahy"
+path = "src/bin/ahy.rs"
+
+[dependencies]
+archydes-format.workspace = true
+archydes-decode.workspace = true
+archydes-recovery.workspace = true
+clap.workspace = true
+rpassword.workspace = true

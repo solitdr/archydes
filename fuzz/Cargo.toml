@@ -1,0 +1,65 @@
+[package]
+name = "archydes-fuzz"
+version = "0.0.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+archydes-format = { path = "../crates/archydes-format" }
+archydes-decode = { path = "../crates/archydes-decode" }
+archydes-recovery = { path = "../crates/archydes-recovery" }
+archydes-zlib = { path = "../crates/archydes-zlib" }
+
+# Own workspace, so the fuzz crate does not end up in the normal build.
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "open_archive"
+path = "fuzz_targets/open_archive.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "cbor"
+path = "fuzz_targets/cbor.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "index"
+path = "fuzz_targets/index.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "recovery"
+path = "fuzz_targets/recovery.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "encrypted"
+path = "fuzz_targets/encrypted.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "transform"
+path = "fuzz_targets/transform.rs"
+test = false
+doc = false
+bench = false

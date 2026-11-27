@@ -1,0 +1,60 @@
+# On a tag like v0.1.0: builds the Linux binaries and attaches them to a draft release.
+# The macOS binary is built, signed and notarized by SOLIT and added to the same release.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 ||
+            gh release create "$GITHUB_REF_NAME" --draft --verify-tag --title "archydes ${GITHUB_REF_NAME#v}" --notes-file CHANGELOG.md
+
+  linux:
+    needs: draft
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            arch: x86_64
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-22.04-arm
+            arch: arm64
+            target: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust
+        run: rustup toolchain install stable --profile minimal && rustup default stable
+      - name: Build and test
+        run: |
+          cargo test --release --workspace --locked
+          cargo build --release --locked -p archydes-cli --target ${{ matrix.target }}
+          python3 testvectors/check.py --archydes target/${{ matrix.target }}/release/archydes
+      - name: Package
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          name="archydes-$version-linux-${{ matrix.arch }}"
+          asset="archydes-linux-${{ matrix.arch }}.tar.gz"   # without version: stable "latest" links
+          mkdir -p "dist/$name"
+          cp target/${{ matrix.target }}/release/archydes target/${{ matrix.target }}/release/ahy "dist/$name/"
+          cp README.md LICENSE-MIT LICENSE-APACHE "dist/$name/"
+          python3 scripts/third-party-notices.py --target ${{ matrix.target }} --out "dist/$name/THIRD-PARTY-NOTICES.txt"
+          tar -C dist -czf "dist/$asset" "$name"
+          (cd dist && sha256sum "$asset" > "$asset.sha256")
+          echo "ASSET=dist/$asset" >> "$GITHUB_ENV"
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" "$ASSET" "$ASSET.sha256" --clobber

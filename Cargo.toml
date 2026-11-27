@@ -1,0 +1,45 @@
+[workspace]
+resolver = "3"
+members = ["crates/archydes-format", "crates/archydes-decode", "crates/archydes-recovery", "crates/archydes-zlib", "crates/archydes-cli"]
+# Forks of third-party crates keep their own license and are not workspace members (D-012).
+exclude = ["vendor/preflate-rs"]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.100"
+license = "MIT OR Apache-2.0"
+authors = ["SOLIT SRL"]
+repository = "https://github.com/solitdr/archydes"
+
+[workspace.dependencies]
+preflate-rs = { path = "vendor/preflate-rs", version = "0.7.6" }
+jxl-oxide = { version = "0.12.6", default-features = false }
+archydes-format = { path = "crates/archydes-format", version = "1.0.0" }
+archydes-decode = { path = "crates/archydes-decode", version = "1.0.0" }
+archydes-recovery = { path = "crates/archydes-recovery", version = "1.0.0" }
+archydes-zlib = { path = "crates/archydes-zlib", version = "1.0.0" }
+blake3 = "1.8"
+crc32c = "0.6"
+zstd = { version = "0.14", default-features = false }
+liblzma = { version = "0.4", default-features = false, features = ["static"] }
+thiserror = "2"
+xattr = "1"
+libc = "0.2"
+clap = { version = "4", features = ["derive"] }
+rpassword = "7"
+tempfile = "3"
+# Encryption (SPEC A11, D-049): RustCrypto, MIT OR Apache-2.0.
+chacha20poly1305 = { version = "0.11", default-features = false, features = ["alloc"] }
+argon2 = { version = "0.6", default-features = false, features = ["alloc", "zeroize"] }
+zeroize = "1"
+getrandom = "0.4"
+unicode-normalization = "0.1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 4
+
+# C libraries and dependencies optimized in debug builds too (tests would be very slow otherwise).
+[profile.dev.package."*"]
+opt-level = 2

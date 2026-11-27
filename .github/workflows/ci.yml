@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust
+        run: rustup toolchain install stable --profile minimal --component rustfmt && rustup default stable
+      - name: Format
+        run: cargo fmt --check
+      - name: Tests
+        run: cargo test --release --workspace --locked
+      - name: Test vectors
+        run: |
+          cargo build --release --locked -p archydes-cli
+          python3 testvectors/check.py

@@ -1,0 +1,18 @@
+[package]
+name = "archydes-recovery"
+description = "Recovery data (Reed-Solomon) for Archydes archives: create, check, repair"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+archydes-format.workspace = true
+blake3.workspace = true
+crc32c.workspace = true
+reed-solomon-simd = "3.1"
+
+[dev-dependencies]
+tempfile.workspace = true

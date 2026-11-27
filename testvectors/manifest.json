@@ -1,0 +1,541 @@
+{
+  "about": "Test vectors of the Archydes archive format (SPEC A14). Every decoder must extract each snapshot listed here with exactly these entries. Hashes are SHA-256 of the extracted content (independent of the BLAKE3 hashes inside the format). Modes are the permission bits.",
+  "format_versions": [
+    "1.0",
+    "1.1"
+  ],
+  "vectors": [
+    {
+      "file": "empty.archy",
+      "description": "An archive holding one empty folder and no file data (no PACK segments).",
+      "sha256": "534088f88d2b0028d13649dfdc4d90adfd68f516b55400251f1410f189a8cbb4",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "e",
+              "kind": "dir",
+              "mode": "0755"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "single-file.archy",
+      "description": "One small file at the top level; the content is stored without compression.",
+      "sha256": "51097b717cbd7d6a207101af724be06dbd10bb13c6d696da0628845593b62347",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "hello.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 17,
+              "sha256": "65d8f93a2822d643a6245c12b58a8c7741ab64d30116a5880d23ba38580fa8d8"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "dedup.archy",
+      "description": "Deduplication: a.bin and copy-of-a.bin are identical and share all chunks; a-changed.bin differs in 16 bytes and shares the unchanged chunks. Level fast (zstd).",
+      "sha256": "0168ddc5bd368b8793f645b17185041872ab2312266c38c2345e054bcf5794b8",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/a-changed.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 600000,
+              "sha256": "0a6061138be4c9089f2fa571b75562ab32b3432ad00207bdd694d218bcc1c3fe"
+            },
+            {
+              "path": "d/a.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 600000,
+              "sha256": "441e8fe45b0b62b822940f3aa8f4c5f956f9924da3522b8f08050df6c2c2636a"
+            },
+            {
+              "path": "d/copy-of-a.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 600000,
+              "sha256": "441e8fe45b0b62b822940f3aa8f4c5f956f9924da3522b8f08050df6c2c2636a"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "metadata.archy",
+      "description": "Folders, an empty folder, a symlink, a hard link, a duplicate file and the extended attribute com.example.x on d/a.txt. Level standard (LZMA2).",
+      "sha256": "def6b0e2a65d56394081a1e50a77c3d5bad9b71f5a6c030d45e8f0704a4cdddd",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/a.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "d/dup.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "d/empty",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/l",
+              "kind": "symlink",
+              "mode": "0755",
+              "target": "a.txt"
+            },
+            {
+              "path": "d/sub",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/sub/h",
+              "kind": "hardlink",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+              "target": "d/a.txt"
+            },
+            {
+              "path": "d/sub/r.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 3000,
+              "sha256": "794ac0cfb7ce2072132b65adcaedcdeea9a0971f67889f76bff2f59d9b00e744"
+            },
+            {
+              "path": "d/sub/t.csv",
+              "kind": "file",
+              "mode": "0644",
+              "size": 5592,
+              "sha256": "355c7c3e5405d5e5ce8f126665c06cbb63a57e29be368f610f23321a79842bf7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "level-fast.archy",
+      "description": "The same content as metadata.archy, level fast (zstd).",
+      "sha256": "82cfe659d54743c378c4d0ab502e94ee531b1a541c71c3f2e3e0eeb8aab84ca6",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/a.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "d/dup.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "d/empty",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/l",
+              "kind": "symlink",
+              "mode": "0755",
+              "target": "a.txt"
+            },
+            {
+              "path": "d/sub",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/sub/h",
+              "kind": "hardlink",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+              "target": "d/a.txt"
+            },
+            {
+              "path": "d/sub/r.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 3000,
+              "sha256": "794ac0cfb7ce2072132b65adcaedcdeea9a0971f67889f76bff2f59d9b00e744"
+            },
+            {
+              "path": "d/sub/t.csv",
+              "kind": "file",
+              "mode": "0644",
+              "size": 5592,
+              "sha256": "355c7c3e5405d5e5ce8f126665c06cbb63a57e29be368f610f23321a79842bf7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "level-max.archy",
+      "description": "The same content as metadata.archy, level max.",
+      "sha256": "a2c207021741d22a53d897a435760dd9d9c75a89c4e6144d856b310af85ffebe",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/a.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "d/dup.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "d/empty",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/l",
+              "kind": "symlink",
+              "mode": "0755",
+              "target": "a.txt"
+            },
+            {
+              "path": "d/sub",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/sub/h",
+              "kind": "hardlink",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03",
+              "target": "d/a.txt"
+            },
+            {
+              "path": "d/sub/r.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 3000,
+              "sha256": "794ac0cfb7ce2072132b65adcaedcdeea9a0971f67889f76bff2f59d9b00e744"
+            },
+            {
+              "path": "d/sub/t.csv",
+              "kind": "file",
+              "mode": "0644",
+              "size": 5592,
+              "sha256": "355c7c3e5405d5e5ce8f126665c06cbb63a57e29be368f610f23321a79842bf7"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "transforms.archy",
+      "description": "Reverse transformations (SPEC A7): a JPEG stored as JPEG XL (JPEG_FROM_JXL), a ZIP container with Deflate entries (ZLIB_EXACT, PREFLATE) and a stored JPEG, and a PDF with a JPEG and Flate streams. Every file must come out bit-exact.",
+      "sha256": "cc644d116c756f73bb0364c69cae340024b3a2ee80f7a9a815e153bb32e749ba",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "s",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "s/book.xlsx",
+              "kind": "file",
+              "mode": "0644",
+              "size": 21837,
+              "sha256": "46d02175e3c674d23e306eeec67f5df6853c947ef7b27b6cfa79fc2030622447"
+            },
+            {
+              "path": "s/doc.pdf",
+              "kind": "file",
+              "mode": "0644",
+              "size": 19570,
+              "sha256": "e1d38672d765cfadf4407de2a5e8b78d8e181248c2b6dc48697615262fc4a74f"
+            },
+            {
+              "path": "s/gradient.jpg",
+              "kind": "file",
+              "mode": "0644",
+              "size": 8401,
+              "sha256": "b12bfb7466d0a52339ee25b0bb0be34dadf867f3845f2744df77e3fb15d19c7e"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "recovery.archy",
+      "description": "Recovery data (SPEC A9) covering the whole file.",
+      "sha256": "a8d810171cf6221e6c8e44a9539d71dadfab070301c4cd31ab25d266d2423b42",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "s",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "s/a.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 6,
+              "sha256": "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"
+            },
+            {
+              "path": "s/l",
+              "kind": "symlink",
+              "mode": "0755",
+              "target": "a.txt"
+            },
+            {
+              "path": "s/sub",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "s/sub/n.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 13893,
+              "sha256": "2e57c67a8bbe706a08d6638ec67da02b67b3743ae7d35948cbcf8d1f45cae0a5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "recovery-damaged.archy",
+      "description": "recovery.archy with 512 bytes of its PACK segment overwritten (offset 400). verify must report the damage; repair must restore recovery.archy byte for byte.",
+      "sha256": "be9b79e99617eb2c870a840c555d39d11d657d3a3c7b29eba918b58f2f03a6ba",
+      "damaged": true,
+      "repairs_to": "recovery.archy",
+      "snapshots": []
+    },
+    {
+      "file": "generations.archy",
+      "description": "Three generations (SPEC A10): created with snapshot 1, snapshot 2 appended, snapshot 1 removed. Only snapshot 2 is left.",
+      "sha256": "f8c88e25ae9d29c08e2e10e7be47b856b479036bb955198c8c641e5bd7860408",
+      "snapshots": [
+        {
+          "id": 2,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/r.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 3000,
+              "sha256": "5a14631cc291423549b0496bbf48d838d6c80804e4d3bb9424cd9c21824d3d55"
+            },
+            {
+              "path": "d/t1.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "5e8f0383cacfb81566df09c10d00cf24cd897e3ab90c1a2d345f65351bfc5872"
+            },
+            {
+              "path": "d/t2.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "63d804e3f38649922343b1822105cfec2a3677cda6c6ef0b0ca6fef75da0a00c"
+            },
+            {
+              "path": "d/t3.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "f6946327b1c853a80f18fe657ce7fc31b0f769e7a4a946b13d151e35d41e609b"
+            },
+            {
+              "path": "d/t4.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 4,
+              "sha256": "7148855a83bde71c263a00c43f3deb63b08d4eb2ad96bf1d033b9a5ba750ffd5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "generations-interrupted.archy",
+      "description": "generations.archy without its last 30 bytes: the third generation was interrupted. A decoder must use the second generation's footer (snapshots 1 and 2) and treat the 67.3 KB after it (from offset 138006) as the remains of an interrupted append.",
+      "sha256": "6e242cad3775a2d3efe34402a8893f70395f0831df878bafc87395b48cef605a",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/r.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 3000,
+              "sha256": "5a14631cc291423549b0496bbf48d838d6c80804e4d3bb9424cd9c21824d3d55"
+            },
+            {
+              "path": "d/t1.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "5e8f0383cacfb81566df09c10d00cf24cd897e3ab90c1a2d345f65351bfc5872"
+            },
+            {
+              "path": "d/t2.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "63d804e3f38649922343b1822105cfec2a3677cda6c6ef0b0ca6fef75da0a00c"
+            },
+            {
+              "path": "d/t3.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "f6946327b1c853a80f18fe657ce7fc31b0f769e7a4a946b13d151e35d41e609b"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "entries": [
+            {
+              "path": "d",
+              "kind": "dir",
+              "mode": "0755"
+            },
+            {
+              "path": "d/r.bin",
+              "kind": "file",
+              "mode": "0644",
+              "size": 3000,
+              "sha256": "5a14631cc291423549b0496bbf48d838d6c80804e4d3bb9424cd9c21824d3d55"
+            },
+            {
+              "path": "d/t1.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "5e8f0383cacfb81566df09c10d00cf24cd897e3ab90c1a2d345f65351bfc5872"
+            },
+            {
+              "path": "d/t2.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "63d804e3f38649922343b1822105cfec2a3677cda6c6ef0b0ca6fef75da0a00c"
+            },
+            {
+              "path": "d/t3.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 20,
+              "sha256": "f6946327b1c853a80f18fe657ce7fc31b0f769e7a4a946b13d151e35d41e609b"
+            },
+            {
+              "path": "d/t4.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 4,
+              "sha256": "7148855a83bde71c263a00c43f3deb63b08d4eb2ad96bf1d033b9a5ba750ffd5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "encrypted-1.1.archy",
+      "description": "Format 1.1, encrypted (SPEC A11). The password is given in NFC; an implementation must also accept it in NFD (\"Pru\\u0308fung 1.1\"), because passwords are normalized to NFC. A wrong password, for example \"prüfung 1.1\", must be rejected.",
+      "sha256": "68d3c133a10b190245516ce9eb750197527e40b48e23b865cdcaa39c95cfe9a3",
+      "password": "Prüfung 1.1",
+      "snapshots": [
+        {
+          "id": 1,
+          "entries": [
+            {
+              "path": "hallo.txt",
+              "kind": "file",
+              "mode": "0644",
+              "size": 70,
+              "sha256": "dc123abbdc623117da02187eeff1450f905234da29f5a3ed5ba210c7cd0d09d2"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "crypto_known_answers": "Known-answer values for key derivation, wrapping of the data key, subkeys and sealing are in crates/archydes-format/tests/crypto_vectors.rs."
+}

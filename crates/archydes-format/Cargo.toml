@@ -1,0 +1,20 @@
+[package]
+name = "archydes-format"
+description = "Container structures of the Archydes archive format: header, segments, footer, index"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+blake3.workspace = true
+crc32c.workspace = true
+zstd.workspace = true
+thiserror.workspace = true
+chacha20poly1305.workspace = true
+argon2.workspace = true
+zeroize.workspace = true
+getrandom.workspace = true
+unicode-normalization.workspace = true
